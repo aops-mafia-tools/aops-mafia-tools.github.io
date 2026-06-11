@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AoPS Mafia Tools
 // @namespace    https://aops-mafia-tools.github.io/
-// @version      3.9
+// @version      3.10
 // @description  Tools for the AoPS Mafia forum
 // @match        https://artofproblemsolving.com/community*
 // @author       cw357, Apostla
@@ -88,7 +88,7 @@ function parseTarget(parsed, playerList, unvote,NoElim) {
     }
     return "invalid|target";
 }
-const version = "3.9";
+const version = "3.10";
 
 function gather(callback) {
     const session_id = AoPS.session.id;
@@ -664,7 +664,7 @@ async function ac() {
                     activityCheckBBCode += player.username;
                     if (player.post != -1) {
                         activityCheckHTML += " (<a href=https://artofproblemsolving.com/community/p" + player.post_id + ">#" + player.post + "</a>)";
-                        activityCheckBBCode += " ([url=https://artofproblemsolving.com/community/p" + player.post_id + "]#" + player.post + "[/url]";
+                        activityCheckBBCode += " ([url=https://artofproblemsolving.com/community/p" + player.post_id + "]#" + player.post + "[/url])";
                     }
                 }
             }

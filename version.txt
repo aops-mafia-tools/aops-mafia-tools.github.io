@@ -1,1 +1,1 @@
-3.9|,- newline votecount fix<br>  - unvote and vote ruleset sync<br> - phantom tag and capitalization patch<br><u>MUST INSTALL UPDATE FOR ACCURATE VOTECOUNTS</u>
+3.10|,- newline votecount fix<br>  - unvote and vote ruleset sync<br> - phantom tag and capitalization patch<br> - activity check post fix<br><u>MUST INSTALL UPDATE FOR ACCURATE VOTECOUNTS</u>

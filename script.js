@@ -77,7 +77,7 @@ function parseTarget(parsed, playerList, unvote,NoElim) {
     }
     return "invalid|target";
 }
-const version = "3.9";
+const version = "3.10";
 
 function gather(callback) {
     const session_id = AoPS.session.id;
@@ -653,7 +653,7 @@ async function ac() {
                     activityCheckBBCode += player.username;
                     if (player.post != -1) {
                         activityCheckHTML += " (<a href=https://artofproblemsolving.com/community/p" + player.post_id + ">#" + player.post + "</a>)";
-                        activityCheckBBCode += " ([url=https://artofproblemsolving.com/community/p" + player.post_id + "]#" + player.post + "[/url]";
+                        activityCheckBBCode += " ([url=https://artofproblemsolving.com/community/p" + player.post_id + "]#" + player.post + "[/url])";
                     }
                 }
             }
@@ -746,3 +746,4 @@ function load() {
     document.getElementsByClassName("cmty-topic-third-row-right")[0].style.width = '66%';
     document.getElementsByClassName("cmty-topic-third-row-right")[0].prepend(mafiaButton);
 }
+
