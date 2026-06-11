@@ -64,7 +64,7 @@ function parseTarget(parsed, playerList, unvote,NoElim,username) {
     var target = "invalid|target";
     for (const parsedLine of lines) {
         const moreParsedLine = " " + parsedLine + " ";
-        const processed = moreParsedLine.matchAll(/(?= Vote: ((?:[A-Z]|[a-z]|\.|_|-|[0-9])*)(?:\s*)$)/gm);
+        const processed = moreParsedLine.matchAll(/(?= Vote:(?:\s*)((?:[A-Z]|[a-z]|\.|_|-|[0-9])*)(?:\s*)$)/gm);
         for (const match of processed){
         for (const slot of playerList) {
             for (const name of slot.name) {
@@ -90,7 +90,7 @@ function parseTarget(parsed, playerList, unvote,NoElim,username) {
 }
     return target;
 }
-const version = "3.12";
+const version = "3.13";
 
 function gather(callback) {
     const session_id = AoPS.session.id;
