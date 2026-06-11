@@ -1,4 +1,8 @@
-const newVersion = await fetchVersion();
+let newVersion;
+(async () => {
+ newVersion = await fetchVersion();
+ })();
+
 var topic_id;
 
 setTimeout(() => {
@@ -90,7 +94,7 @@ function parseTarget(parsed, playerList, unvote,NoElim,username) {
 }
     return target;
 }
-const version = "3.13";
+const version = "3.15";
 
 function gather(callback) {
     const session_id = AoPS.session.id;
