@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AoPS Mafia Tools
 // @namespace    https://aops-mafia-tools.github.io/
-// @version      3.11
+// @version      3.12
 // @description  Tools for the AoPS Mafia forum
 // @match        https://artofproblemsolving.com/community*
 // @author       cw357, Apostla
@@ -61,7 +61,7 @@ async function gameInfo() {
     }
 }
 
-function parseTarget(parsed, playerList, unvote,NoElim) {
+function parseTarget(parsed, playerList, unvote,NoElim,username) {
     const NoElimLower = [];
     NoElim.forEach((item, index) => {
   NoElimLower[index] = item.toLowerCase();
@@ -69,26 +69,39 @@ function parseTarget(parsed, playerList, unvote,NoElim) {
     console.log("playerlist: ");
     console.log(playerList);
     console.log(parsed);
+    console.log(unvote);
     console.log("PARSED: " + parsed.substring(0,6).toLowerCase());
-    if (unvote.includes(parsed.toLowerCase())) {
-        return "N|A";
-    } else if (NoElimLower.includes(parsed.toLowerCase())) {
-        return "No|Hang";
-    } else if (parsed.substring(0,6) != "Vote: ") {
-        return "invalid|target";
-    } else {
+    const lines = parsed.split("\n");
+    var target = "invalid|target";
+    for (const parsedLine of lines) {
+        const moreParsedLine = " " + parsedLine + " ";
+        const processed = moreParsedLine.matchAll(/(?= Vote: ((?:[A-Z]|[a-z]|\.|_|-|[0-9])*)(?:\s*)$)/gm);
+        for (const match of processed){
         for (const slot of playerList) {
             for (const name of slot.name) {
-                console.log('name: ' + name + " parsed: " + parsed);
-                if (parsed.toLowerCase().substring(6) == name.toLowerCase()) {
-                    return slot.name[slot.name.length - 1];
+                console.log('name: ' + name + " parsed: " + match[1]);
+                if (match[1].toLowerCase() == name.toLowerCase()) {
+                    target = slot.name[slot.name.length - 1];
                 }
             }
+        }}
+        for (const unvoteLine of unvote) {
+            if (parsedLine.toLowerCase().includes(unvoteLine.toLowerCase())) {
+                target = "N|A";
+            }
         }
-    }
-    return "invalid|target";
+        for (const noVoteLine of NoElimLower) {
+            console.log(noVoteLine);
+            if (parsedLine.toLowerCase().includes(noVoteLine)) {
+                target = "No|Hang";
+            }
+
+        }
+
 }
-const version = "3.11";
+    return target;
+}
+const version = "3.12";
 
 function gather(callback) {
     const session_id = AoPS.session.id;
@@ -132,13 +145,13 @@ function removeNested(canonical_text, openTags, closeTags) {
     for (const code of bbCode) {
         console.log(code[0]);
         console.log(code.index);
-        
-        
-        
-        
-        
+
+
+
+
+
         if (code[0].includes("phantom")) {
-            
+
         } else if (code[0].includes("[/quote]")) {
             quoteCount--;
         } else if (code[0].includes("[quote")) {
@@ -159,8 +172,9 @@ function removeNested(canonical_text, openTags, closeTags) {
             codeEnd = code.index + code[0].length;
         }
     }
+    console.log(codeStart + " AND " + codeEnd);
     if (codeStart != -1 && codeEnd != -1) {
-        return canonical_text.substring(codeStart,codeEnd).replaceAll("\n","");
+        return canonical_text.substring(codeStart,codeEnd);
     }
     return "";
 }
@@ -277,7 +291,7 @@ modal.appendChild(stickyFooter);
 
 
 function iso(players, start, end) {
-    
+
     console.log(start);
     console.log(end);
     gather(function(posts) {
@@ -366,18 +380,21 @@ async function vc() {
             const current_post = posts[i];
             if (current_post.post_number > lastPost) {
                 console.log(current_post.post_canonical);
+                console.log(removeNested(current_post.post_canonical,validOpenTags,validCloseTags));
+                console.log(removeNested(current_post.post_canonical,validOpenTags,validCloseTags).match(/(?:])(.+)(?:\[)/s));
                 var parsedMsg;
                 if (removeNested(current_post.post_canonical,validOpenTags,validCloseTags) == "") {
                     parsedMsg = "";
-                } else if (removeNested(current_post.post_canonical,validOpenTags,validCloseTags).match(/(?:])(.+)(?:\[)/) != null) {
-                    parsedMsg = removeNested(current_post.post_canonical,validOpenTags,validCloseTags).match(/(?:])(.+)(?:\[)/)[1];
+                } else if (removeNested(current_post.post_canonical,validOpenTags,validCloseTags).match(/(?:])(.+)(?:\[)/s) != null) {
+                    parsedMsg = removeNested(current_post.post_canonical,validOpenTags,validCloseTags).match(/(?:])(.+)(?:\[)/s)[1];
                 } else {
                     parsedMsg = "invalid|target";
                 }
+                console.log(current_post.post_canonical);
                 console.log(parsedMsg);
                 for (const slot of playerList) {
                     if (slot.name.includes(current_post.username) && parsedMsg != "") {
-                        const target = parseTarget(parsedMsg, playerList,unvote,NoElim);
+                        const target = parseTarget(parsedMsg, playerList,unvote,NoElim,slot.name);
                         console.log(target);
                         if (target != "invalid|target") {
                             slot.target = target;
